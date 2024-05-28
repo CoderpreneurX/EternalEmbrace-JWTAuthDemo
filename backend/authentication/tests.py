@@ -83,3 +83,25 @@ class TestUserAndProfileModels(APITestCase):
         self.assertEqual(response.status_code, 200)
 
         print(response.data)
+
+    def test_retrieve_profile(self):
+        user = User.objects.create_user(
+            username='itz_sherlyn_kaur',
+            email='queries@sherlynkaur.me',
+            password='Sherlynkaur12345',
+            first_name='Sherlyn',
+            last_name='Kaur'
+        )
+
+        from rest_framework_simplejwt.tokens import AccessToken
+
+        access_token = AccessToken.for_user(user)
+
+        profile = Profile.objects.create(user=user, country='UK', city='London')
+
+        retrieve_profile_url = reverse('retrieve-user-profile')
+        response = self.client.get(retrieve_profile_url, HTTP_AUTHORIZATION=f'Bearer {access_token}')
+
+        self.assertEqual(response.status_code, 200)
+
+        print(response.data)
