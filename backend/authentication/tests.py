@@ -20,15 +20,31 @@ class TestUserAndProfileModels(APITestCase):
         self.assertEqual(response.status_code, 201)
 
     def test_login_user(self):
-        self.test_register_user()
         test_user_creds = {
             'username': 'itz_test_user',
             'password': 'Testuser12345',
         }
 
+        User.objects.create_user(**test_user_creds)
+
         url = reverse('login-user')
         response = self.client.post(url, test_user_creds)
 
-        print(response.data)
-
         self.assertEqual(response.status_code, 200)
+
+        return response.data['access']
+    
+    def test_register_profile(self):
+        access_token = self.test_login_user()
+
+        data = {
+            'first_name': 'Test',
+            'last_name': 'User',
+            'country': 'India',
+            'city': 'Batala',
+        }
+        
+        url = reverse('create-user-profile')
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=f'Bearer {access_token}')
+
+        print(response.data)
