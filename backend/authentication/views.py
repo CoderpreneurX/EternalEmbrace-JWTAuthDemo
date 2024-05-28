@@ -34,8 +34,8 @@ class EditUserProfileView(generics.UpdateAPIView):
 
     def get_object(self):
         user = self.request.user
-        print(user)
-        return self.queryset.get(user=user)
+        profile = self.queryset.get(user=user)
+        return profile
 
     def perform_update(self, serializer):
         user = self.request.user
