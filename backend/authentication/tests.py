@@ -47,4 +47,39 @@ class TestUserAndProfileModels(APITestCase):
         url = reverse('create-user-profile')
         response = self.client.post(url, data, HTTP_AUTHORIZATION=f'Bearer {access_token}')
 
+    def test_edit_profile(self):
+        user = User.objects.create_user(
+            username='itz_test_user',
+            password='Testuser12345',
+            email='testuser@testing.site'
+        )
+
+        profile = Profile.objects.create(
+            user=user,
+            # first_name='Test',
+            # last_name='User',
+            country='India',
+            city='Batala'
+        )
+
+        login_url = reverse('login-user')
+        access_token = self.client.post(
+            login_url,
+            data={
+                'username': user.username,
+                'password': 'Testuser12345',
+            } 
+        ).data['access']
+
+        edit_profile_url = reverse('edit-user-profile')
+
+        response = self.client.put(edit_profile_url, data={
+            'first_name': 'Prabjeet',
+            'last_name': 'Singh',
+            'country': 'UK',
+            'city': 'London',
+        }, HTTP_AUTHORIZATION=f'Bearer {access_token}')
+
+        self.assertEqual(response.status_code, 200)
+
         print(response.data)
