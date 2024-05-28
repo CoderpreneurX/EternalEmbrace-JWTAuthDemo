@@ -47,3 +47,13 @@ class EditUserProfileView(generics.UpdateAPIView):
 
         serializer.save(user=user)
         return serializer
+    
+class RetrieveUserProfileView(generics.RetrieveAPIView):
+    queryset = Profile.objects.all()
+    permission_classes = [IsAuthenticated]
+    serializer_class = ProfileSerializer
+
+    def get_object(self):
+        user = self.request.user
+        profile = self.queryset.get(user=user)
+        return profile
